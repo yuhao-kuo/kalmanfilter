@@ -14,27 +14,27 @@
 
 clone this project
 
-    ```
-    git clone https://github.com/yuhao-kuo/kalmanfilter.git kalmanfilter
-    ``
+```
+git clone https://github.com/yuhao-kuo/kalmanfilter.git kalmanfilter
+```
 
 change to project directory
 
-    ```
-    cd kalmanfiler
-    ```
+```
+cd kalmanfiler
+```
 
 build project
 
-    ```
-    make kalman1d
-    ```
+```
+make kalman1d
+```
 
 run kalman test
 
-    ```
-    ./kalman1d.o -o kalman.log
-    ```
+```
+./kalman1d.o -o kalman.log
+```
     
 ### 執行參數
 
