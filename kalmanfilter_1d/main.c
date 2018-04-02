@@ -31,18 +31,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <getopt.h>
+#include <time.h>
 #include "KalmanFilter.h"
 #include "kmath.h"
 
-/************************* º∆æ⁄ ******************************/
+/************************* Data ******************************/
 
-/** matlab linspace ≤£•ÕΩu© º∆æ⁄ */
+/** matlab linspace create datas */
 double matlab_linspace(double min, double max, int location, int allsize)
 {
     return min + ((max - min) / allsize) * location;
 }
 
-/** matlab randn º“¿¿randn•\Ø‡ */
+/** matlab randn */
 double randn(void)
 {
     return ((double)(rand() % 100000) / 10000) * ((rand() % 2) ? 1 : -1);
@@ -50,9 +52,9 @@ double randn(void)
 
 
 
-/************************ ™ißŒº“¿¿ *****************************/
+/************************ Waveform simulation *****************************/
 
-/** ≤£•Õ•[≥tº“´¨ */
+/** create runner speed model */
 
 void *speed_profile(const int32_t startSpeed,
                     const int32_t endSpeed,
@@ -95,9 +97,9 @@ void *speed_profile(const int32_t startSpeed,
 }
 
 
-/************************** ∏ÍÆ∆æﬁß@ ********************************/
+/************************** Data operation ********************************/
 
-/** ∏ÍÆ∆¶Í±µ */
+/** data cmp */
 void doublencmp(double *destination, ssize_t cmpadd, const double *source, ssize_t len)
 {
     ssize_t cnt;
@@ -112,34 +114,45 @@ void doublencmp(double *destination, ssize_t cmpadd, const double *source, ssize
 
 #define maxdata 3000
 #define testdata    maxdata/3
-int main()
+
+int main(int argc, char *argv[])
 {
     int16_t i = 0;
+    int opt;
+    char *logPath = "./kalman.log";
+    
+    if((opt = getopt(argc, argv, "ho:")) != -1) {
+        switch(opt) {
+            case 'o':   // output path
+                logPath = optarg;
+                break;
+            case 'h':
+            default:
+                printf("help:\n");
+                printf("\to: output data name, -o [output name]\n");
+                return 0;
+        }
+    }
+
+    printf("log name: %s\n", logPath);
 
     // test data
     double pathpz[3][maxdata];
-    double pz[maxdata];   //ßπ¨¸≠»
-    double z[maxdata];  //•[§W∆[¥˙¬¯∞T™∫∆[¥˙≠»
+    double pz[maxdata];
+    double z[maxdata];
     double w[maxdata];
     double v[maxdata];
 
-    /* ∂√º∆∫ÿ§l */
+    /* ‰∫ÇÊï∏Á®ÆÂ≠ê */
     srand(time(NULL));
 
-    /* ≤£•Õº“¿¿∏ÍÆ∆ */
-    /*speed_profile(0, 0, 0, 10, testdata, pathpz[0]);  //≤£•Õ•[¥Ó≥t™¨∫Aº“¿¿º∆æ⁄
-    speed_profile(0, 0, 1500, 1, testdata, pathpz[1]);
-    speed_profile(0, 0, 0, 0, testdata, pathpz[2]);
-    doublencmp(pz, 0, pathpz[0], testdata);
-    doublencmp(pz, testdata, pathpz[1], testdata);
-    doublencmp(pz, testdata*2, pathpz[2], testdata);*/
     for(i=0; i<maxdata; i++)
     {
-        pz[i] = matlab_linspace(4, 5, i, maxdata);     // Ωu© ©R•Oº∆æ⁄
-        w[i] = 0.5 * randn();   // ¿Hæ˜¬¯∞T
+        pz[i] = matlab_linspace(4, 5, i, maxdata);
+        w[i] = 0.5 * randn();
 
-        z[i] = pz[i] + w[i];    // πÍª⁄¶^±¬º∆≠»
-        v[i] = 0.01 * randn();  // ¿Hæ˜∞™¥µ§¿•¨
+        z[i] = pz[i] + w[i];
+        v[i] = 0.01 * randn();
     }
 
     printf("data create ok !!!\n");
@@ -156,7 +169,7 @@ int main()
 
     /* file io */
     FILE *pf;
-    pf = fopen("C:\\Users\\User\\Desktop\\test.txt", "w+");
+    pf = fopen(logPath, "w+");
     if(pf == NULL)
     {
         printf("file open error!!\n");
