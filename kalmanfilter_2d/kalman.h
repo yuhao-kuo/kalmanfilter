@@ -19,7 +19,6 @@ typedef struct {
     double Q;
     double X[2];
     double R[2];
-    // int32_t DB;
 } Kalman_t;
 
 extern void kalmanInit(Kalman_t *obj);
