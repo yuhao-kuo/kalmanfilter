@@ -23,7 +23,7 @@ typedef struct {
 
 extern void kalmanInit(Kalman_t *obj);
 
-int32_t kalmanfilter(Kalman_t *obj, uint16_t sen1, uint16_t sen2);
+int32_t kalmanfilter(Kalman_t *obj, int32_t sen1, int32_t sen2);
 
 #ifdef __cpluplus
 }
